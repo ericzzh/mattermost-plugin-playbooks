@@ -17,13 +17,13 @@ describe('playbook run rhs > latest update', () => {
 
     before(() => {
         // # Login as user-1
-        cy.apiLogin('user-1');
+        cy.legacyApiLogin('user-1');
 
-        cy.apiGetTeamByName('ad-1').then((team) => {
+        cy.legacyApiGetTeamByName('ad-1').then((team) => {
             teamId = team.id;
-            cy.apiGetCurrentUser().then((user) => {
+            cy.legacyApiGetCurrentUser().then((user) => {
                 userId = user.id;
-                cy.apiGetChannelByName('ad-1', 'town-square').then(({channel}) => {
+                cy.legacyApiGetChannelByName('ad-1', 'town-square').then(({channel}) => {
                     // # Create a playbook
                     cy.apiCreateTestPlaybook({
                         teamId,
@@ -45,7 +45,7 @@ describe('playbook run rhs > latest update', () => {
         cy.viewport('macbook-13');
 
         // # Login as user-1
-        cy.apiLogin('user-1');
+        cy.legacyApiLogin('user-1');
 
         // # Create a new playbook run
         const now = Date.now();
@@ -82,7 +82,7 @@ describe('playbook run rhs > latest update', () => {
             const now = Date.now();
             const broadcastDisplayName = 'Private channel (' + now + ')';
             const broadcastName = 'private-channel-' + now;
-            cy.apiCreateChannel(teamId, broadcastName, broadcastDisplayName, 'P')
+            cy.legacyApiCreateChannel(teamId, broadcastName, broadcastDisplayName, 'P')
                 .then(({channel}) => {
                     // # Create a playbook with a private broadcast channel configured
                     cy.apiCreateTestPlaybook({
@@ -118,9 +118,9 @@ describe('playbook run rhs > latest update', () => {
 
         it('shows a generic message when the broadcast channel is a direct message', () => {
             // # Create a DM
-            cy.apiGetUsers(['user-1', 'douglas.daniels']).then((res) => {
+            cy.legacyApiGetUsers(['user-1', 'douglas.daniels']).then((res) => {
                 const userIds = res.body.map((user) => user.id);
-                cy.apiCreateDM(userIds[0], userIds[1]).then(({channel}) => {
+                cy.legacyApiCreateDM(userIds[0], userIds[1]).then(({channel}) => {
                     // # Create a playbook with a private broadcast channel configured
                     cy.apiCreateTestPlaybook({
                         teamId,
@@ -157,9 +157,9 @@ describe('playbook run rhs > latest update', () => {
 
         it('shows a generic message when the broadcast channel is a group channel', () => {
             // # Create a GM
-            cy.apiGetUsers(['user-1', 'douglas.daniels', 'christina.wilson']).then((res) => {
+            cy.legacyApiGetUsers(['user-1', 'douglas.daniels', 'christina.wilson']).then((res) => {
                 const userIds = res.body.map((user) => user.id);
-                cy.apiCreateGroup(userIds).then((resp) => {
+                cy.legacyApiCreateGroup(userIds).then((resp) => {
                     // # Create a playbook with a private broadcast channel configured
                     cy.apiCreateTestPlaybook({
                         teamId,
@@ -474,7 +474,7 @@ describe('playbook run rhs > latest update', () => {
                     });
 
                     // # Delete the second status update
-                    cy.deletePost(postId);
+                    cy.legacyApiDeletePost(postId);
                 });
 
                 // # Verify that the RHS shows the first status update
@@ -515,7 +515,7 @@ describe('playbook run rhs > latest update', () => {
 
                 // # Write 50 posts to make sure the latest update is not loaded after a refresh
                 for (let i = 0; i < 50; i++) {
-                    cy.apiCreatePost(playbookRunChannelId, 'Dummy message #' + i, '', {});
+                    cy.legacyApiCreatePost(playbookRunChannelId, 'Dummy message #' + i, '', {});
                 }
 
                 // # Reload the page so the redux store is cleared
@@ -554,7 +554,7 @@ describe('playbook run rhs > latest update', () => {
                     cy.uiSwitchChannel('Town Square');
 
                     // # Delete the second status update via API
-                    cy.apiDeletePost(postId).then(() => {
+                    cy.legacyApiDeletePost(postId).then(() => {
                         // # Get back to the original channel
                         cy.uiSwitchChannel(playbookRunName);
                     });
@@ -578,7 +578,7 @@ describe('playbook run rhs > latest update', () => {
                     cy.uiSwitchChannel('Town Square');
 
                     // # Edit the status update via API
-                    cy.apiEditPost(postId, newMessage).then(() => {
+                    cy.legacyApiEditPost(postId, newMessage).then(() => {
                         // # Get back to the original channel
                         cy.uiSwitchChannel(playbookRunName);
                     });
@@ -612,7 +612,7 @@ describe('playbook run rhs > latest update', () => {
                     });
 
                     // # Delete the status update
-                    cy.deletePost(postId);
+                    cy.legacyApiDeletePost(postId);
 
                     // * Verify that the RHS shows that there are no updates.
                     cy.get('#playbookRunRHSUpdates')
@@ -641,7 +641,7 @@ describe('playbook run rhs > latest update', () => {
                         });
 
                         // # Delete the second status update.
-                        cy.deletePost(secondId);
+                        cy.legacyApiDeletePost(secondId);
 
                         // * Verify that the RHS shows the first status update.
                         cy.get('div[class^=UpdateSection-]').within(() => {
@@ -649,7 +649,7 @@ describe('playbook run rhs > latest update', () => {
                         });
 
                         // # Delete the first status update.
-                        cy.deletePost(firstId);
+                        cy.legacyApiDeletePost(firstId);
 
                         // * Verify that the RHS shows that there are no updates.
                         cy.get('#playbookRunRHSUpdates')
@@ -675,7 +675,7 @@ describe('playbook run rhs > latest update', () => {
                     cy.uiSwitchChannel('Town Square');
 
                     // # Delete the status update through the API
-                    cy.apiDeletePost(postId).then(() => {
+                    cy.legacyApiDeletePost(postId).then(() => {
                         // # Get back to the playbook run channel
                         cy.uiSwitchChannel(playbookRunName);
                     });
@@ -710,9 +710,9 @@ describe('playbook run rhs > latest update', () => {
                         cy.uiSwitchChannel('Town Square');
 
                         // # Delete the second status update.
-                        cy.apiDeletePost(secondId).then(() => {
+                        cy.legacyApiDeletePost(secondId).then(() => {
                             // # Delete the first status update.
-                            cy.apiDeletePost(firstId).then(() => {
+                            cy.legacyApiDeletePost(firstId).then(() => {
                                 // # Get back to the playbook run channel
                                 cy.uiSwitchChannel(playbookRunName);
                             });
